@@ -5,6 +5,7 @@ namespace App\Models;
 // use Laravel\Fortify\TwoFactorAuthenticatable;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Enum\GiveawayStatus;
 use App\Enum\UserRole;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -51,5 +52,25 @@ class User extends Authenticatable
 	public function wonGiveaways(): BelongsToMany
 	{
 		return $this->belongsToMany(Giveaway::class, 'giveaway_winners');
+	}
+
+	public function scopeEndedCreatedGiveaways(): HasMany
+	{
+		return $this->createdGiveaways()->where('status', GiveawayStatus::ENDED);
+	}
+
+	public function scopeActiveJoinedGiveaways(): BelongsToMany
+	{
+		return $this->joinedGiveaways()
+			->where('status', GiveawayStatus::ACTIVE)
+			->withCount(['participants'])
+			->latest();
+	}
+
+	public function scopeCreatedGiveaways(): HasMany
+	{
+		return $this->createdGiveaways()
+			->withCount(['participants'])
+			->oldest('ends_at');
 	}
 }

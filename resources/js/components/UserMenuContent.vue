@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Link, router } from '@inertiajs/vue3';
 import { LogOut, Settings } from 'lucide-vue-next';
+import { capitalize } from 'vue';
 import {
     DropdownMenuGroup,
     DropdownMenuItem,
@@ -25,8 +26,13 @@ defineProps<Props>();
 
 <template>
     <DropdownMenuLabel class="p-0 font-normal">
-        <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-            <UserInfo :user="user" :show-email="true" />
+        <div class="flex flex-col gap-3 px-1 py-1.5">
+            <div class="flex items-center gap-2 text-left text-sm">
+                <UserInfo :user="user" :show-email="true" />
+            </div>
+            <p class="text-xs text-muted-foreground">
+                Role: {{ capitalize(user.role) }}
+            </p>
         </div>
     </DropdownMenuLabel>
     <DropdownMenuSeparator />
