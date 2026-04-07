@@ -77,7 +77,7 @@ const { isCurrentUrl } = useCurrentUrl();
         <div
             :class="
                 cn(
-                    'mx-auto flex w-full max-w-5xl flex-col gap-6 p-4',
+                    'mx-auto flex w-full max-w-5xl flex-col gap-6 overflow-auto p-4',
                     contentContainerClass,
                 )
             "

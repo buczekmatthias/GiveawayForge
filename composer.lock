@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1112e23d1670ab25bb70c7e4558041c6",
+    "content-hash": "bacfaa62bab1398c82fe7d61ac514f4c",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -189,6 +189,73 @@
                 }
             ],
             "time": "2024-02-09T16:56:22+00:00"
+        },
+        {
+            "name": "coduo/php-humanizer",
+            "version": "5.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/coduo/php-humanizer.git",
+                "reference": "b38f769ec45ae708ca76ded6b2ddea2e5938fdfb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/coduo/php-humanizer/zipball/b38f769ec45ae708ca76ded6b2ddea2e5938fdfb",
+                "reference": "b38f769ec45ae708ca76ded6b2ddea2e5938fdfb",
+                "shasum": ""
+            },
+            "require": {
+                "php": "~8.3 || ~8.4 || ~8.5",
+                "symfony/translation": "~5.4 || ~6.4 || ~7 || ~8"
+            },
+            "require-dev": {
+                "aeon-php/calendar": "^1.0",
+                "thunderer/shortcode": "^0.7"
+            },
+            "suggest": {
+                "ext-intl": "Required if you are going to use humanizer with locales different than en_EN"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michał Dąbrowski",
+                    "email": "dabrowski@brillante.pl"
+                },
+                {
+                    "name": "Norbert Orzechowicz",
+                    "email": "norbert@orzechowicz.pl"
+                }
+            ],
+            "description": "Humanize values that are readable only for developers",
+            "keywords": [
+                "humanize",
+                "humanizer",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/coduo/php-humanizer/issues",
+                "source": "https://github.com/coduo/php-humanizer/tree/5.0.3"
+            },
+            "funding": [
+                {
+                    "url": "https://flow-php.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/norberttech",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-12-11T20:13:52+00:00"
         },
         {
             "name": "dasprid/enum",

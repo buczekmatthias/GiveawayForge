@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enum\GiveawayStatus;
+use App\Models\Concerns\HasSlug;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Giveaway extends Model
 {
 	/** @use HasFactory<\Database\Factories\GiveawayFactory> */
-	use HasFactory;
+	use HasFactory, HasSlug;
 
 	protected function casts(): array
 	{

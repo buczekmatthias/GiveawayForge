@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enum\EntryRequirementType;
+use App\Models\Concerns\HasSlug;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class EntryRequirement extends Model
 {
 	/** @use HasFactory<\Database\Factories\EntryRequirementFactory> */
-	use HasFactory;
+	use HasFactory, HasSlug;
 
 	protected function casts(): array
 	{

@@ -2,6 +2,7 @@
 import { Link } from '@inertiajs/vue3';
 import { Plus } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
+import giveaways from '@/routes/giveaways';
 </script>
 
 <template>
@@ -11,7 +12,7 @@ import { Button } from '@/components/ui/button';
         class="mt-auto"
         as-child
     >
-        <Link href="#">
+        <Link :href="giveaways.create()">
             <Plus class="size-5" />
             Create giveaway
         </Link>

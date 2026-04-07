@@ -3,10 +3,11 @@
 namespace App\Models;
 
 // use Laravel\Fortify\TwoFactorAuthenticatable;
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enum\GiveawayStatus;
 use App\Enum\UserRole;
+use App\Models\Concerns\HasSlug;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -18,10 +19,10 @@ use Illuminate\Notifications\Notifiable;
 
 #[Fillable(['slug', 'name', 'email', 'password', 'role'])]
 #[Hidden(['password', /* 'two_factor_secret', 'two_factor_recovery_codes', */ 'remember_token'])]
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
 	/** @use HasFactory<UserFactory> */
-	use HasFactory, Notifiable /*, TwoFactorAuthenticatable */;
+	use HasFactory, Notifiable, HasSlug /*, TwoFactorAuthenticatable */;
 
 	/**
 	 * Get the attributes that should be cast.
@@ -38,7 +39,7 @@ class User extends Authenticatable
 		];
 	}
 
-	public function createdGiveaways(): HasMany
+	public function giveaways(): HasMany
 	{
 		return $this->hasMany(Giveaway::class);
 	}
@@ -69,7 +70,7 @@ class User extends Authenticatable
 
 	public function scopeCreatedGiveaways(): HasMany
 	{
-		return $this->createdGiveaways()
+		return $this->giveaways()
 			->withCount(['participants'])
 			->oldest('ends_at');
 	}

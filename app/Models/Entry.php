@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasSlug;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Entry extends Model
 {
 	/** @use HasFactory<\Database\Factories\EntryFactory> */
-	use HasFactory;
+	use HasFactory, HasSlug;
 
 	protected $table = 'giveaway_entries';
 

@@ -19,3 +19,16 @@ export type Giveaway = {
 };
 
 export type GiveawayStatus = 'scheduled' | 'active' | 'ended' | 'complete';
+
+export type EntryRequirement = {
+    slug?: string;
+    type: string;
+    label: string;
+    entries: number;
+    config?: any;
+};
+
+export type EntryRequirementTypeValue =
+    | 'button_click'
+    | 'secret_code'
+    | 'question';
