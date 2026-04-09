@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Auth;
 
 #[Fillable(['slug', 'type', 'label', 'config', 'entries'])]
 class EntryRequirement extends Model
@@ -32,5 +33,10 @@ class EntryRequirement extends Model
 	public function entries(): HasMany
 	{
 		return $this->hasMany(Entry::class);
+	}
+
+	public function hasUserUsedThisRequirement(): HasMany
+	{
+		return $this->entries()->where('user_id', Auth::user()->id);
 	}
 }

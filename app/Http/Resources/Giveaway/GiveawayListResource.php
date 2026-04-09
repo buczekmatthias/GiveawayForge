@@ -18,12 +18,12 @@ class GiveawayListResource extends JsonResource
 		return [
 			'slug' => $this->slug,
 			'title' => $this->title,
-			'ends_at' => $this->ends_at->diffForHumans(),
+			'ends_at' => $this->ends_at->format('d/m/Y H:i'),
 			'winners_count' => $this->winners_count,
 			'status' => $this->status,
-			'participants_count' => $this->whenCounted(
-				'participants',
-				NumberHumanizer::metricSuffix($this->participants_count)
+			'participants_count' => $this->whenLoaded(
+				'participantsCount',
+				NumberHumanizer::metricSuffix($this->participantsCount->aggregate)
 			)
 		];
 	}

@@ -10,12 +10,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Auth;
 
 #[Fillable(['slug', 'title', 'description', 'banner', 'starts_at', 'ends_at', 'winners_count', 'status'])]
 class Giveaway extends Model
 {
 	/** @use HasFactory<\Database\Factories\GiveawayFactory> */
 	use HasFactory, HasSlug;
+
+	protected $with = ['participantsCount'];
 
 	protected function casts(): array
 	{
@@ -37,9 +41,17 @@ class Giveaway extends Model
 		->distinct();
 	}
 
-	public function hasUserEntered(User $user): bool
+	public function participantsCount(): HasOne
 	{
-		return $this->participants()->wherePivot('user_id', $user->id)->exists();
+		return $this
+			->hasOne(Entry::class)
+			->selectRaw('giveaway_id, COUNT(DISTINCT user_id) as aggregate')
+			->groupBy('giveaway_id');
+	}
+
+	public function hasUserEntered(): BelongsToMany
+	{
+		return $this->participants()->wherePivot('user_id', Auth::user()->id);
 	}
 
 	public function entryRequirements(): HasMany

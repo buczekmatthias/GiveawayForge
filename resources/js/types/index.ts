@@ -11,24 +11,39 @@ export type Giveaway = {
     banner?: string;
     starts_at: string;
     ends_at: string;
+    has_started: boolean;
+    has_ended: boolean;
     winners_count: number;
     status: GiveawayStatus;
     user: User;
     created_at: string;
     participants_count: number;
+    can: {
+        update: boolean;
+        delete: boolean;
+    };
 };
 
 export type GiveawayStatus = 'scheduled' | 'active' | 'ended' | 'complete';
 
-export type EntryRequirement = {
-    slug?: string;
-    type: string;
+export type FormEntryRequirement = {
+    type: EntryRequirementTypeValue;
     label: string;
     entries: number;
     config?: any;
+};
+
+export type EntryRequirement = FormEntryRequirement & {
+    slug: string;
+    has_user_used_this_requirement: boolean;
 };
 
 export type EntryRequirementTypeValue =
     | 'button_click'
     | 'secret_code'
     | 'question';
+
+export type Participant = {
+    name: string;
+    entries: number;
+};

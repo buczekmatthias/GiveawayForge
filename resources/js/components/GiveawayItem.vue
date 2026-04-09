@@ -3,6 +3,7 @@ import { Link } from '@inertiajs/vue3';
 import { Clock, Trophy, Users } from 'lucide-vue-next';
 import Heading from '@/components/Heading.vue';
 import { Card } from '@/components/ui/card';
+import giveaways from '@/routes/giveaways';
 import type { Giveaway } from '@/types';
 import GiveawayStatusIndicator from './GiveawayStatusIndicator.vue';
 
@@ -14,7 +15,7 @@ defineProps<Props>();
 </script>
 
 <template>
-    <Link href="#" class="group">
+    <Link :href="giveaways.show(giveaway)" class="group">
         <Card class="gap-4 px-2 duration-150 group-hover:bg-accent/20">
             <GiveawayStatusIndicator :status="giveaway.status" />
 

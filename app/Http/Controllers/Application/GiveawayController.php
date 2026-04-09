@@ -6,12 +6,16 @@ use App\Enum\EntryRequirementLabel;
 use App\Enum\GiveawayStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Giveaway\StoreGiveawayRequest;
+use App\Http\Resources\Giveaway\EntryRequirementResource;
+use App\Http\Resources\Giveaway\GiveawayShowResource;
+use App\Http\Resources\Giveaway\ParticipantResource;
 use App\Models\Giveaway;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -32,6 +36,8 @@ class GiveawayController extends Controller
 	#[Middleware('verified')]
 	public function create(): Response
 	{
+		Gate::authorize('create', Giveaway::class);
+
 		return Inertia::render('giveaway/Create', [
 			'defaultLabels' => EntryRequirementLabel::toArray()
 		]);
@@ -43,6 +49,8 @@ class GiveawayController extends Controller
 	#[Middleware('verified')]
 	public function store(StoreGiveawayRequest $request): RedirectResponse
 	{
+		Gate::authorize('create', Giveaway::class);
+
 		$data = $request->validated();
 
 		$giveaway = DB::transaction(function () use ($data, $request) {
@@ -91,8 +99,35 @@ class GiveawayController extends Controller
 	 */
 	public function show(Giveaway $giveaway): Response
 	{
+		$g = GiveawayShowResource::make($giveaway);
+
+		$gA = $g->toArray(request());
+
+		$shareRequirements = $gA['has_started'] && !$gA['has_ended'];
+
 		return Inertia::render('giveaway/Show', [
-			'giveaway' => $giveaway
+			'giveaway' => $g,
+			'entry_requirements' => $shareRequirements ? EntryRequirementResource::collection(
+				$giveaway
+					->entryRequirements()
+					->select(['slug', 'type', 'label', 'config', 'entries'])
+					->withExists(['hasUserUsedThisRequirement'])
+					->get()
+			) : [],
+			'participants' => $gA['has_started']
+				? Inertia::scroll(
+					fn () => ParticipantResource::collection(
+						$giveaway
+							->entries()
+							->select('giveaway_entries.user_id')
+							->selectRaw('MAX(users.name) as name, SUM(entry_requirements.entries) as total_entries')
+							->join('entry_requirements', 'entry_requirements.id', '=', 'giveaway_entries.entry_requirement_id')
+							->join('users', 'users.id', '=', 'giveaway_entries.user_id')
+							->groupBy('giveaway_entries.user_id')
+							->paginate(2)
+					)
+				)
+				: []
 		]);
 	}
 
@@ -107,9 +142,11 @@ class GiveawayController extends Controller
 	/**
 	 * Update the specified resource in storage.
 	 */
-	public function update(Request $request, Giveaway $giveaway)
+	public function update(Request $request, Giveaway $giveaway): RedirectResponse
 	{
-		//
+		Gate::authorize('update', $giveaway);
+
+		return back();
 	}
 
 	/**
@@ -118,5 +155,29 @@ class GiveawayController extends Controller
 	public function destroy(Giveaway $giveaway)
 	{
 		//
+	}
+
+	public function startEarly(Giveaway $giveaway): RedirectResponse
+	{
+		Gate::authorize('update', $giveaway);
+
+		$giveaway->update([
+			'starts_at' => now(),
+			'status' => GiveawayStatus::ACTIVE
+		]);
+
+		return back(status: 303);
+	}
+
+	public function endEarly(Giveaway $giveaway): RedirectResponse
+	{
+		Gate::authorize('update', $giveaway);
+
+		$giveaway->update([
+			'ends_at' => now(),
+			'status' => GiveawayStatus::ENDED
+		]);
+
+		return back(status: 303);
 	}
 }

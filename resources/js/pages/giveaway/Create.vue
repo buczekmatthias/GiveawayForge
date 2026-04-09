@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useForm } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 import type { ZonedDateTime } from '@internationalized/date';
 import { getLocalTimeZone, now } from '@internationalized/date';
 import { computed, onMounted, ref } from 'vue';
@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import giveaways from '@/routes/giveaways';
-import type { EntryRequirement, EntryRequirementTypeValue } from '@/types';
+import type { EntryRequirementTypeValue, FormEntryRequirement } from '@/types';
 
 const fileInputKey = ref<number>(0);
 
@@ -31,7 +31,7 @@ const newGiveawayForm = useForm({
             label: '',
             entries: 1,
         },
-    ],
+    ] as FormEntryRequirement[],
 });
 
 const mounted = ref(false);
@@ -54,7 +54,7 @@ const resetBannerInput = (): void => {
 };
 
 const addNewRequirement = (entryType: EntryRequirementTypeValue): void => {
-    const entry: EntryRequirement = {
+    const entry: FormEntryRequirement = {
         type: entryType,
         entries: 1,
         label: '',
@@ -103,6 +103,8 @@ const submitForm = () => {
 </script>
 
 <template>
+    <Head title="Create giveaway" />
+
     <div class="flex flex-col gap-6">
         <Heading
             title="New giveaway"

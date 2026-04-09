@@ -20,7 +20,7 @@ class GiveawayPolicy
 	 */
 	public function update(User $user, Giveaway $giveaway): bool
 	{
-		return false;
+		return $user->id === $giveaway->user_id;
 	}
 
 	/**
@@ -28,22 +28,6 @@ class GiveawayPolicy
 	 */
 	public function delete(User $user, Giveaway $giveaway): bool
 	{
-		return false;
-	}
-
-	/**
-	 * Determine whether the user can restore the model.
-	 */
-	public function restore(User $user, Giveaway $giveaway): bool
-	{
-		return false;
-	}
-
-	/**
-	 * Determine whether the user can permanently delete the model.
-	 */
-	public function forceDelete(User $user, Giveaway $giveaway): bool
-	{
-		return false;
+		return $user->isStaff() || $user->id === $giveaway->user_id;
 	}
 }

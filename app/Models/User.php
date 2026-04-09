@@ -55,6 +55,17 @@ class User extends Authenticatable implements MustVerifyEmail
 		return $this->belongsToMany(Giveaway::class, 'giveaway_winners');
 	}
 
+	public function isStaff(): bool
+	{
+		return in_array(
+			$this->role,
+			[
+				UserRole::ADMIN,
+				UserRole::MOD
+			]
+		);
+	}
+
 	public function scopeEndedCreatedGiveaways(): HasMany
 	{
 		return $this->createdGiveaways()->where('status', GiveawayStatus::ENDED);
@@ -64,14 +75,12 @@ class User extends Authenticatable implements MustVerifyEmail
 	{
 		return $this->joinedGiveaways()
 			->where('status', GiveawayStatus::ACTIVE)
-			->withCount(['participants'])
 			->latest();
 	}
 
 	public function scopeCreatedGiveaways(): HasMany
 	{
 		return $this->giveaways()
-			->withCount(['participants'])
 			->oldest('ends_at');
 	}
 }

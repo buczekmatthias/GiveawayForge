@@ -1,14 +1,10 @@
 <script setup lang="ts">
 import { usePage } from '@inertiajs/vue3';
-import {
-    MessageCircleQuestion,
-    MousePointerClick,
-    RectangleEllipsis,
-    Trash,
-} from 'lucide-vue-next';
+import { Trash } from 'lucide-vue-next';
+import EntryRequirementDecorativeText from '@/components/EntryRequirementDecorativeText.vue';
 import FormItem from '@/components/FormItem.vue';
 import { Input } from '@/components/ui/input';
-import type { EntryRequirement } from '@/types';
+import type { FormEntryRequirement } from '@/types';
 
 type Props = {
     form: any;
@@ -17,7 +13,7 @@ type Props = {
 
 defineProps<Props>();
 
-const model = defineModel<EntryRequirement>();
+const model = defineModel<FormEntryRequirement>();
 
 type DefaultLabels = {
     [key: string]: string;
@@ -31,20 +27,7 @@ const emit = defineEmits(['removeEntry']);
 <template>
     <div class="grid gap-4 rounded-md border p-2.5 md:grid-cols-[2fr_1fr]">
         <div class="col-span-full flex items-center justify-between gap-2">
-            <div class="flex items-center gap-2">
-                <template v-if="model!.type === 'button_click'">
-                    <MousePointerClick class="size-5 md:size-6" />
-                    <p class="text-sm md:text-base">Click the button to join</p>
-                </template>
-                <template v-else-if="model!.type === 'secret_code'">
-                    <RectangleEllipsis class="size-5 md:size-6" />
-                    <p class="text-sm md:text-base">Provide secret code</p>
-                </template>
-                <template v-else>
-                    <MessageCircleQuestion class="size-5 md:size-6" />
-                    <p class="text-sm md:text-base">Answer the question</p>
-                </template>
-            </div>
+            <EntryRequirementDecorativeText :type="model!.type" />
             <button @click="emit('removeEntry')" class="cursor-pointer">
                 <Trash class="size-5 text-red-500 md:size-6" />
             </button>

@@ -8,7 +8,6 @@ import type { Giveaway } from '@/types';
 
 defineOptions({
     layout: {
-        page: 'Homepage',
         contentContainerClass: 'max-w-4xl gap-10',
     },
 });
