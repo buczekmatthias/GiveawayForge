@@ -56,7 +56,8 @@ class Giveaway extends Model
 		return $this
 			->hasOne(Entry::class)
 			->selectRaw('giveaway_id, COUNT(DISTINCT user_id) as aggregate')
-			->groupBy('giveaway_id');
+			->groupBy('giveaway_id')
+			->withDefault(['aggregate' => 0]);
 	}
 
 	public function entryRequirements(): HasMany

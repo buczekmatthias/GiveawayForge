@@ -22,6 +22,7 @@ export type Giveaway = {
         update: boolean;
         delete: boolean;
     };
+    entry_requirements: FormEntryRequirement[];
 };
 
 export type GiveawayStatus = 'scheduled' | 'active' | 'ended' | 'complete';
@@ -31,6 +32,7 @@ export type FormEntryRequirement = {
     label: string;
     entries: number;
     config?: any;
+    slug?: string;
 };
 
 export type EntryRequirement = FormEntryRequirement & {

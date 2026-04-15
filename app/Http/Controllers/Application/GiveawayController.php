@@ -6,6 +6,8 @@ use App\Enum\EntryRequirementLabel;
 use App\Enum\GiveawayStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Giveaway\StoreGiveawayRequest;
+use App\Http\Requests\Giveaway\UpdateGiveawayEntryRequest;
+use App\Http\Resources\Giveaway\EditGiveawayResource;
 use App\Http\Resources\Giveaway\EntryRequirementResource;
 use App\Http\Resources\Giveaway\GiveawayShowResource;
 use App\Http\Resources\Giveaway\ParticipantResource;
@@ -13,7 +15,6 @@ use App\Models\Giveaway;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -51,8 +52,6 @@ class GiveawayController extends Controller
 	#[Middleware('verified')]
 	public function store(StoreGiveawayRequest $request): RedirectResponse
 	{
-		Gate::authorize('create', Giveaway::class);
-
 		$data = $request->validated();
 
 		$giveaway = DB::transaction(function () use ($data, $request) {
@@ -142,21 +141,57 @@ class GiveawayController extends Controller
 	/**
 	 * Show the form for editing the specified resource.
 	 */
-	public function edit(Giveaway $giveaway)
+	public function edit(Giveaway $giveaway): Response
 	{
 		Gate::authorize('update', $giveaway);
 
-		//
+		$giveaway->load(['entryRequirements']);
+
+		return Inertia::render('giveaway/Edit', [
+			'giveaway' => EditGiveawayResource::make($giveaway),
+			'defaultLabels' => EntryRequirementLabel::toArray()
+		]);
 	}
 
 	/**
 	 * Update the specified resource in storage.
 	 */
-	public function update(Request $request, Giveaway $giveaway): RedirectResponse
+	public function update(UpdateGiveawayEntryRequest $request, Giveaway $giveaway): RedirectResponse
 	{
-		Gate::authorize('update', $giveaway);
+		$data = collect($request->validated());
 
-		return back();
+		if ($data['delete_banner']) {
+			Storage::delete($giveaway->banner);
+		}
+
+		DB::transaction(function () use ($data, $giveaway) {
+			$giveaway->update([
+				...$data->only('title', 'description', 'winners_count'),
+				...($data['delete_banner'] ? ['banner' => null] : [])
+			]);
+
+			$requirements = collect($data['entry_requirements']);
+
+			$giveaway
+				->entryRequirements()
+				->whereNotIn(
+					'slug',
+					$requirements->pluck('slug')->filter()
+				)
+				->delete();
+
+			$requirements->each(function ($req) use ($giveaway) {
+				if (isset($req['slug'])) {
+					$giveaway->entryRequirements()
+						->where('slug', $req['slug'])
+						->update($req);
+				} else {
+					$giveaway->entryRequirements()->create($req);
+				}
+			});
+		});
+
+		return to_route('giveaways.show', ['giveaway' => $giveaway]);
 	}
 
 	/**

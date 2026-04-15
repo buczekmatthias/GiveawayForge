@@ -33,6 +33,14 @@ trait GiveawayValidationRules
 		];
 	}
 
+	protected function deleteBannerValidationRules(): array
+	{
+		return [
+			'required',
+			'boolean'
+		];
+	}
+
 	protected function startsAtValidationRules(): array
 	{
 		return [
@@ -79,6 +87,15 @@ trait GiveawayValidationRules
 		];
 	}
 
+	protected function entrySlugValidationRules(): array
+	{
+		return [
+			'sometimes',
+			'uuid',
+			Rule::exists('entry_requirements', 'slug')
+		];
+	}
+
 	protected function entryLabelValidationRules(): array
 	{
 		return [
@@ -100,6 +117,7 @@ trait GiveawayValidationRules
 	{
 		return [
 			'sometimes',
+			'nullable',
 			'array'
 		];
 	}

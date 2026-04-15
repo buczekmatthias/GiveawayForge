@@ -47,7 +47,9 @@ const props = defineProps<Props>();
             </Table>
 
             <p class="mt-2 text-center text-sm text-muted-foreground">
-                Displaying 1 - {{ participants.meta.to }} of
+                Displaying {{ participants.meta.total > 0 ? 1 : 0 }} to
+                {{ participants.meta.to ?? 0 }}
+                of
                 {{ participants.meta.total }}
             </p>
 

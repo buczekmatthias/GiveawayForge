@@ -41,7 +41,7 @@ type Answer = {
 
 const props = defineProps<Props>();
 
-const only = ['giveaway', 'entry_requirements', 'winners'];
+const only = ['giveaway', 'entry_requirements', 'participants', 'winners'];
 
 const hasUserJoinedTheGiveaway = computed(
     (): { hasJoined: boolean; entries: number } => {
@@ -98,6 +98,33 @@ const submitEntry = (req: EntryRequirement): void => {
                 class="col-span-full max-h-56 w-full object-cover"
             />
         </template>
+
+        <div
+            class="grid gap-2"
+            :class="
+                giveaway.can.update && giveaway.can.delete
+                    ? 'grid-cols-2'
+                    : 'grid-cols-1'
+            "
+            v-if="giveaway.can.update || giveaway.can.delete"
+        >
+            <Button
+                class="cursor-pointer"
+                as-child
+                variant="secondary"
+                v-if="giveaway.can.update"
+            >
+                <Link :href="giveaways.edit(giveaway)">Edit</Link>
+            </Button>
+            <Button
+                v-if="giveaway.can.delete"
+                as-child
+                variant="destructive"
+                class="cursor-pointer"
+            >
+                <Link :href="giveaways.destroy(giveaway)">Delete</Link>
+            </Button>
+        </div>
 
         <GiveawayStatusIndicator :status="giveaway.status" />
 

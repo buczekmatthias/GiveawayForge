@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enum\GiveawayStatus;
 use App\Models\Giveaway;
 use App\Models\User;
 
@@ -20,7 +21,7 @@ class GiveawayPolicy
 	 */
 	public function update(User $user, Giveaway $giveaway): bool
 	{
-		return $user->id === $giveaway->user_id;
+		return $user->id === $giveaway->user_id && in_array($giveaway->status, [GiveawayStatus::SCHEDULED, GiveawayStatus::ACTIVE]);
 	}
 
 	/**
