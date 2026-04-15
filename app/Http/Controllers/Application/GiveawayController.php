@@ -9,6 +9,7 @@ use App\Http\Requests\Giveaway\StoreGiveawayRequest;
 use App\Http\Requests\Giveaway\UpdateGiveawayEntryRequest;
 use App\Http\Resources\Giveaway\EditGiveawayResource;
 use App\Http\Resources\Giveaway\EntryRequirementResource;
+use App\Http\Resources\Giveaway\GiveawayListResource;
 use App\Http\Resources\Giveaway\GiveawayShowResource;
 use App\Http\Resources\Giveaway\ParticipantResource;
 use App\Models\Giveaway;
@@ -28,9 +29,29 @@ class GiveawayController extends Controller
 	/**
 	 * Display a listing of the resource.
 	 */
-	public function index()
+	public function index(): Response
 	{
-		//
+		$tabs = array_column(GiveawayStatus::cases(), 'value');
+		$status = request('status');
+		$currentUser = request()->user();
+
+		if (!in_array($status, $tabs)) {
+			$status = null;
+		}
+
+		return Inertia::render('giveaway/Index', [
+			'my_giveaways' => Inertia::scroll(
+				GiveawayListResource::collection(
+					Giveaway::query()
+						->select(['slug', 'title', 'ends_at', 'winners_count', 'status'])
+						->when($status, fn ($q) => $q->where('status', $status))
+						->where(fn ($q) => $q->where('user_id', $currentUser->id)->orWhereHas('hasUserEntered'))
+						->paginate(20)
+				)
+			),
+			'tabs' => $tabs,
+			'status_tab' => $status
+		]);
 	}
 
 	/**

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { House } from 'lucide-vue-next';
+import { Gift, House } from 'lucide-vue-next';
 import CreateGiveawayButton from '@/components/CreateGiveawayButton.vue';
 import Heading from '@/components/Heading.vue';
 import NavUser from '@/components/NavUser.vue';
@@ -14,6 +14,7 @@ import {
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { cn } from '@/lib/utils';
 import { home } from '@/routes';
+import giveaways from '@/routes/giveaways';
 import type { NavItem } from '@/types';
 
 type Props = {
@@ -27,6 +28,11 @@ const navigation: NavItem[] = [
         title: 'Homepage',
         href: home(),
         icon: House,
+    },
+    {
+        title: 'Giveaways',
+        href: giveaways.index(),
+        icon: Gift,
     },
 ];
 

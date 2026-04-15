@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -58,6 +59,11 @@ class Giveaway extends Model
 			->selectRaw('giveaway_id, COUNT(DISTINCT user_id) as aggregate')
 			->groupBy('giveaway_id')
 			->withDefault(['aggregate' => 0]);
+	}
+
+	public function hasUserEntered(): BelongsToMany
+	{
+		return $this->participants()->wherePivot('user_id', Auth::user()->id);
 	}
 
 	public function entryRequirements(): HasMany
