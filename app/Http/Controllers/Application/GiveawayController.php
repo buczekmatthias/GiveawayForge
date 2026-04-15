@@ -144,6 +144,8 @@ class GiveawayController extends Controller
 	 */
 	public function edit(Giveaway $giveaway)
 	{
+		Gate::authorize('update', $giveaway);
+
 		//
 	}
 
@@ -160,9 +162,15 @@ class GiveawayController extends Controller
 	/**
 	 * Remove the specified resource from storage.
 	 */
-	public function destroy(Giveaway $giveaway)
+	public function destroy(Giveaway $giveaway): RedirectResponse
 	{
-		//
+		Gate::authorize('delete', $giveaway);
+
+		DB::transaction(function () use ($giveaway) {
+			$giveaway->delete();
+		});
+
+		return to_route('home', status: 303);
 	}
 
 	public function startEarly(Giveaway $giveaway): RedirectResponse

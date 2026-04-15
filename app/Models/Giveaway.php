@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 #[Fillable(['slug', 'title', 'description', 'banner', 'starts_at', 'ends_at', 'winners_count', 'status'])]
 class Giveaway extends Model
@@ -27,6 +29,15 @@ class Giveaway extends Model
 			'starts_at' => 'datetime',
 			'ends_at' => 'datetime',
 		];
+	}
+
+	protected static function booted(): void
+	{
+		static::deleted(function (Giveaway $giveaway) {
+			if ($giveaway->banner) {
+				DB::afterCommit(fn () => Storage::delete($giveaway->banner));
+			}
+		});
 	}
 
 	public function user(): BelongsTo
