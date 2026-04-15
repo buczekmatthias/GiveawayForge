@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Facades\Auth;
 
 #[Fillable(['slug', 'title', 'description', 'banner', 'starts_at', 'ends_at', 'winners_count', 'status'])]
 class Giveaway extends Model
@@ -47,11 +46,6 @@ class Giveaway extends Model
 			->hasOne(Entry::class)
 			->selectRaw('giveaway_id, COUNT(DISTINCT user_id) as aggregate')
 			->groupBy('giveaway_id');
-	}
-
-	public function hasUserEntered(): BelongsToMany
-	{
-		return $this->participants()->wherePivot('user_id', Auth::user()->id);
 	}
 
 	public function entryRequirements(): HasMany

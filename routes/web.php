@@ -11,6 +11,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::resource('giveaways', GiveawayController::class);
 	Route::patch('/giveaways/{giveaway}/start-early', [GiveawayController::class, 'startEarly'])->name('giveaways.early.start');
 	Route::patch('/giveaways/{giveaway}/end-early', [GiveawayController::class, 'endEarly'])->name('giveaways.early.end');
+	Route::post('/giveaways/{giveaway}/pick-winners', [GiveawayController::class, 'pickWinners'])->name('giveaways.winners.pick');
 
 	Route::post('/giveaways/{giveaway}/entries/{entry_requirement}', StoreGiveawayEntryController::class)->name('giveaways.entry.store');
 });

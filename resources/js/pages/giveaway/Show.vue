@@ -10,6 +10,7 @@ import ParticipantsTable from '@/components/ParticipantsTable.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
+import WinnersTable from '@/components/WinnersTable.vue';
 import giveaways from '@/routes/giveaways';
 import type {
     EntryRequirement,
@@ -29,6 +30,7 @@ type Props = {
     giveaway: Giveaway;
     entry_requirements: EntryRequirement[];
     participants: { data: Participant[]; meta: any };
+    winners: Participant[];
 };
 
 type Answer = {
@@ -39,7 +41,7 @@ type Answer = {
 
 const props = defineProps<Props>();
 
-const only = ['giveaway', 'entry_requirements'];
+const only = ['giveaway', 'entry_requirements', 'winners'];
 
 const hasUserJoinedTheGiveaway = computed(
     (): { hasJoined: boolean; entries: number } => {
@@ -154,6 +156,20 @@ const submitEntry = (req: EntryRequirement): void => {
             </Link>
         </Button>
 
+        <Button
+            as-child
+            v-if="
+                giveaway.can.update &&
+                giveaway.has_ended &&
+                giveaway.status === 'ended'
+            "
+            class="cursor-pointer"
+        >
+            <Link :href="giveaways.winners.pick(giveaway)" method="post" :only>
+                Pick winners
+            </Link>
+        </Button>
+
         <Separator />
 
         <Heading
@@ -162,15 +178,18 @@ const submitEntry = (req: EntryRequirement): void => {
             description="Please come back after start date which you can see above"
         />
 
-        <Heading
-            v-if="giveaway.has_ended"
-            title="Giveaway has ended"
-            :description="
-                giveaway.status === 'ended'
-                    ? 'Wait for winners to be announced'
-                    : 'Check the winners below'
-            "
-        />
+        <template v-if="giveaway.has_ended">
+            <Heading
+                title="Giveaway has ended"
+                :description="
+                    giveaway.status === 'ended'
+                        ? 'Wait for winners to be announced'
+                        : 'Check the winners below'
+                "
+            />
+
+            <WinnersTable :winners />
+        </template>
 
         <template v-if="giveaway.has_started && !giveaway.has_ended">
             <div

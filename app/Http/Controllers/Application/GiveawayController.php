@@ -10,6 +10,7 @@ use App\Http\Resources\Giveaway\EntryRequirementResource;
 use App\Http\Resources\Giveaway\GiveawayShowResource;
 use App\Http\Resources\Giveaway\ParticipantResource;
 use App\Models\Giveaway;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -17,6 +18,7 @@ use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -127,6 +129,12 @@ class GiveawayController extends Controller
 							->paginate(2)
 					)
 				)
+				: [],
+			'winners' => $gA['has_ended']
+				? $giveaway
+					->winners()
+					->select(['name'])
+					->get()
 				: []
 		]);
 	}
@@ -179,5 +187,31 @@ class GiveawayController extends Controller
 		]);
 
 		return back(status: 303);
+	}
+
+	public function pickWinners(Giveaway $giveaway): RedirectResponse
+	{
+		$randomParticipants = User::select(['id'])
+			->whereIn('id', function ($q) use ($giveaway) {
+				$q->select('user_id')
+				->from('giveaway_entries')
+				->where('giveaway_id', $giveaway->id);
+			})
+			->inRandomOrder()
+			->limit($giveaway->winners_count)
+			->pluck('id');
+
+		$now = now();
+		$giveaway->winners()->attach(
+			$randomParticipants,
+			[
+				'slug' => Str::orderedUuid(),
+				'created_at' => $now,
+				'updated_at' => $now
+			]
+		);
+		$giveaway->update(['status' => GiveawayStatus::COMPLETE]);
+
+		return back();
 	}
 }

@@ -2,9 +2,6 @@
 import { InfiniteScroll } from '@inertiajs/vue3';
 import type { HTMLAttributes } from 'vue';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import type { Participant } from '@/types';
-import Heading from './Heading.vue';
 import {
     Table,
     TableBody,
@@ -13,6 +10,9 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { cn } from '@/lib/utils';
+import type { Participant } from '@/types';
+import Heading from './Heading.vue';
 
 type Props = {
     participants: { data: Participant[]; meta: any };
