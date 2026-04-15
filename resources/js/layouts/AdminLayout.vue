@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { Link, usePage } from '@inertiajs/vue3';
-import { Gift, Grid, House } from 'lucide-vue-next';
-import CreateGiveawayButton from '@/components/CreateGiveawayButton.vue';
+import { Link } from '@inertiajs/vue3';
+import { Gift, Grid, Users } from 'lucide-vue-next';
 import Heading from '@/components/Heading.vue';
 import NavUser from '@/components/NavUser.vue';
 import { Button } from '@/components/ui/button';
@@ -14,7 +13,6 @@ import {
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { cn } from '@/lib/utils';
 import { home } from '@/routes';
-import giveaways from '@/routes/giveaways';
 import staff from '@/routes/staff';
 import type { NavItem } from '@/types';
 
@@ -24,28 +22,22 @@ type Props = {
 
 defineProps<Props>();
 
-const page = usePage();
-
 const navigation: NavItem[] = [
     {
-        title: 'Homepage',
-        href: home(),
-        icon: House,
+        title: 'Dashboard',
+        href: staff.dashboard(),
+        icon: Grid,
+    },
+    {
+        title: 'Users',
+        href: staff.users.index(),
+        icon: Users,
     },
     {
         title: 'Giveaways',
-        href: giveaways.index(),
+        href: staff.giveaways.index(),
         icon: Gift,
     },
-    ...(page.props.auth.is_staff
-        ? [
-              {
-                  title: 'Dashboard',
-                  href: staff.dashboard(),
-                  icon: Grid,
-              },
-          ]
-        : []),
 ];
 
 const { isCurrentUrl } = useCurrentUrl();
@@ -54,12 +46,9 @@ const { isCurrentUrl } = useCurrentUrl();
 <template>
     <div class="grid h-dvh w-full grid-cols-[auto_1fr] grid-rows-[auto_1fr]">
         <div class="col-span-full flex items-center gap-4 border-b px-4 py-3">
-            <Heading
-                variant="small"
-                :title="$page.props.name"
-                class="mr-auto"
-            />
-            <CreateGiveawayButton />
+            <Link :href="home()" class="mr-auto">
+                <Heading variant="small" :title="$page.props.name" />
+            </Link>
             <NavUser />
         </div>
         <div class="flex flex-col justify-center gap-4 border-r p-2">

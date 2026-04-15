@@ -46,6 +46,7 @@ class GiveawayController extends Controller
 						->select(['slug', 'title', 'ends_at', 'winners_count', 'status'])
 						->when($status, fn ($q) => $q->where('status', $status))
 						->where(fn ($q) => $q->where('user_id', $currentUser->id)->orWhereHas('hasUserEntered'))
+						->latest()
 						->paginate(20)
 				)
 			),
@@ -225,6 +226,10 @@ class GiveawayController extends Controller
 		DB::transaction(function () use ($giveaway) {
 			$giveaway->delete();
 		});
+
+		if (request('redirect_back')) {
+			return back(status: 303);
+		}
 
 		return to_route('home', status: 303);
 	}

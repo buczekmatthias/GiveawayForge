@@ -11,6 +11,7 @@ export type User = {
 export type Auth = {
     user: User;
     can_create_giveaway: boolean;
+    is_staff: boolean;
 };
 
 export type TwoFactorConfigContent = {
