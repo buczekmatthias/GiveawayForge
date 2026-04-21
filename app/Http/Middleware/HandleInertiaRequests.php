@@ -42,7 +42,7 @@ class HandleInertiaRequests extends Middleware
 			'auth' => [
 				'user' => $request->user(),
 				'can_create_giveaway' => $request->user()?->can('create', Giveaway::class),
-				'is_staff' => $request->user()->isStaff()
+				'is_staff' => $request->user()?->isStaff()
 			],
 			'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
 		];

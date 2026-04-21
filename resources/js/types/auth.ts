@@ -5,7 +5,18 @@ export type User = {
     created_at: string;
     updated_at: string;
     [key: string]: unknown;
-    role: string;
+    role: Role;
+};
+
+export type Role = 'admin' | 'mod' | 'user';
+
+export type UserListItem = User & {
+    slug: string;
+    can: {
+        promote: boolean;
+        demote: boolean;
+        delete: boolean;
+    };
 };
 
 export type Auth = {

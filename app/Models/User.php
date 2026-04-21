@@ -11,6 +11,7 @@ use App\Models\Concerns\HasSlug;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -66,6 +67,11 @@ class User extends Authenticatable implements MustVerifyEmail
 		);
 	}
 
+	public function isAdmin(): bool
+	{
+		return $this->role === UserRole::ADMIN;
+	}
+
 	public function scopeEndedCreatedGiveaways(): HasMany
 	{
 		return $this->createdGiveaways()->where('status', GiveawayStatus::ENDED);
@@ -82,5 +88,10 @@ class User extends Authenticatable implements MustVerifyEmail
 	{
 		return $this->giveaways()
 			->oldest('ends_at');
+	}
+
+	public function scopeOrderInRoleHierarchy(Builder $query, string $order = 'asc'): Builder
+	{
+		return $query->orderByRaw("array_position("."'{" . implode(',', array_reverse(array_column(UserRole::cases(), 'value'))) . "}'"."::text[],role) {$order}");
 	}
 }
