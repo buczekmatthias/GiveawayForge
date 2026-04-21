@@ -12,6 +12,8 @@ use App\Http\Resources\Giveaway\EntryRequirementResource;
 use App\Http\Resources\Giveaway\GiveawayListResource;
 use App\Http\Resources\Giveaway\GiveawayShowResource;
 use App\Http\Resources\Giveaway\ParticipantResource;
+use App\Jobs\EndGiveaway;
+use App\Jobs\StartGiveaway;
 use App\Models\Giveaway;
 use App\Models\User;
 use Carbon\Carbon;
@@ -80,7 +82,7 @@ class GiveawayController extends Controller
 			$giveaway = Giveaway::make([
 				'title' => $data['title'],
 				'description' => $data['description'],
-				'banner' => Storage::put('giveaways', $data['banner']),
+				'banner' => $data['banner'] ? Storage::put('giveaways', $data['banner']) : null,
 				'starts_at' => Carbon::parse($data['starts_at']),
 				'ends_at' => Carbon::parse($data['ends_at']),
 				'winners_count' => $data['winners_count'],
@@ -113,6 +115,12 @@ class GiveawayController extends Controller
 
 			return $giveaway;
 		});
+
+		if ($giveaway->status === GiveawayStatus::SCHEDULED) {
+			StartGiveaway::dispatch($giveaway)->delay($giveaway->starts_at);
+		}
+
+		EndGiveaway::dispatch($giveaway)->delay($giveaway->ends_at);
 
 		return to_route('giveaways.show', ['giveaway' => $giveaway->slug]);
 	}

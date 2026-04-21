@@ -322,11 +322,12 @@ const submitEntry = (req: EntryRequirement): void => {
         </template>
     </div>
 
-    <Separator class="lg:hidden" />
+    <template v-if="giveaway.has_started">
+        <Separator class="lg:hidden" />
 
-    <ParticipantsTable
-        v-if="giveaway.has_started"
-        class="lg:sticky lg:top-0 xl:col-start-2"
-        :participants
-    />
+        <ParticipantsTable
+            class="lg:sticky lg:top-0 xl:col-start-2"
+            :participants
+        />
+    </template>
 </template>
