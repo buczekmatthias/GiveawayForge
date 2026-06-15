@@ -1,6 +1,6 @@
 # GiveawayForge
 
-A template for a platform to host giveaways.
+A platform for creating and managing giveaways.
 
 ## Stack
 
