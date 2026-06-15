@@ -57,6 +57,8 @@ DB_USERNAME=
 DB_PASSWORD=
 ```
 
+### Start your postgres server and create database matching the name from .env file
+
 ### Migrate and seed database
 
 ```
@@ -66,8 +68,6 @@ php artisan migrate
 ```
 php artisan db:seed
 ```
-
-### Start your postgres server and create database matching the name from .env file
 
 ### Start application server
 
